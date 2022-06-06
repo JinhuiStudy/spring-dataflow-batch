@@ -21,20 +21,23 @@ services:
 ##    restart: always
 
   mysql:
-    image: mysql:5.7.25
+    platform: linux/x86_64
+#    image: mysql:5.7.25
+    image: library/mysql:5.7
     container_name: dataflow-mysql
     environment:
       MYSQL_DATABASE: dataflow
-      MYSQL_USER: root
+#      MYSQL_USER: root
       MYSQL_ROOT_PASSWORD: rootpw
       TZ: Asia/Seoul
     ports:
       - "3306:3306"
-#    restart: always
     volumes:
       - ./docker/mysql/var/lib/mysql:/var/lib/mysql
+      - ./docker/mysql/init:/docker-entrypoint-initdb.d
 
   kafka-broker:
+    platform: linux/x86_64
     image: confluentinc/cp-kafka:5.5.2
     container_name: dataflow-kafka
     ports:
@@ -53,6 +56,7 @@ services:
       - zookeeper
 
   zookeeper:
+    platform: linux/x86_64
     image: confluentinc/cp-zookeeper:5.5.2
     container_name: dataflow-kafka-zookeeper
     ports:
@@ -64,6 +68,7 @@ services:
       - ZOOKEEPER_CLIENT_PORT=2181
 
   dataflow-server:
+    platform: linux/x86_64
     user: root
     image: springcloud/spring-cloud-dataflow-server:${DATAFLOW_VERSION:-2.9.1}${BP_JVM_VERSION:-}
     container_name: dataflow-server
@@ -106,6 +111,7 @@ services:
       - ./docker/dataflow-server/logs:/var/log/dataflow-server
 
   app-import-stream:
+    platform: linux/x86_64
     image: springcloud/baseimage:1.0.0
     container_name: dataflow-app-import-stream
     depends_on:
@@ -120,6 +126,7 @@ services:
         echo 'Maven Stream apps imported'"
 
   app-import-task:
+    platform: linux/x86_64
     image: springcloud/baseimage:1.0.0
     container_name: dataflow-app-import-task
     depends_on:
@@ -131,6 +138,7 @@ services:
         echo 'Maven Task apps imported'"
 
   skipper-server:
+    platform: linux/x86_64
     user: root
     image: springcloud/spring-cloud-skipper-server:${SKIPPER_VERSION:-2.8.1}${BP_JVM_VERSION:-}
     container_name: skipper

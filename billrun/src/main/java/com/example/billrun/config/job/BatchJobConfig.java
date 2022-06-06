@@ -8,12 +8,14 @@ import org.springframework.batch.core.annotation.BeforeJob;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
+import org.springframework.cloud.task.configuration.EnableTask;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 
 
 @Slf4j
+@EnableTask
 @Configuration
 @EnableBatchProcessing
 @RequiredArgsConstructor
