@@ -1,4 +1,4 @@
-package com.example.billrun.config.step;
+package com.example.billrun.sample.simple;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

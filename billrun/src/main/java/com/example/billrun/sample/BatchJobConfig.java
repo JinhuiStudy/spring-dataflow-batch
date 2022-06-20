@@ -1,4 +1,4 @@
-package com.example.billrun.config.job;
+package com.example.billrun.sample;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

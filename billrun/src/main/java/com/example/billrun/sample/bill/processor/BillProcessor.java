@@ -1,7 +1,7 @@
-package com.example.billrun.config.processor;
+package com.example.billrun.sample.bill.processor;
 
-import com.example.billrun.config.domain.Bill;
-import com.example.billrun.config.domain.Usage;
+import com.example.billrun.sample.bill.domain.Bill;
+import com.example.billrun.sample.bill.domain.Usage;
 import org.springframework.batch.item.ItemProcessor;
 
 

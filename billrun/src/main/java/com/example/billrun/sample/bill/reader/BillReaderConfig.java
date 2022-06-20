@@ -1,6 +1,6 @@
-package com.example.billrun.config.reader;
+package com.example.billrun.sample.bill.reader;
 
-import com.example.billrun.config.domain.Usage;
+import com.example.billrun.sample.bill.domain.Usage;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.batch.item.json.JacksonJsonObjectReader;
 import org.springframework.batch.item.json.JsonItemReader;
