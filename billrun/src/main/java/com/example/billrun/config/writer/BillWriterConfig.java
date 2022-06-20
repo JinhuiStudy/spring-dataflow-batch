@@ -1,6 +1,6 @@
 package com.example.billrun.config.writer;
 
-import com.example.billrun.config.dominio.Bill;
+import com.example.billrun.config.domain.Bill;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilder;

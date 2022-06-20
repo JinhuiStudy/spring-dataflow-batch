@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package com.example.billrun.config.dominio;
+package com.example.billrun.config.domain;
 
 public class Bill {
 

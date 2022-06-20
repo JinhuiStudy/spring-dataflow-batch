@@ -1,7 +1,7 @@
 package com.example.billrun.config.step;
 
-import com.example.billrun.config.dominio.Bill;
-import com.example.billrun.config.dominio.Usage;
+import com.example.billrun.config.domain.Bill;
+import com.example.billrun.config.domain.Usage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
