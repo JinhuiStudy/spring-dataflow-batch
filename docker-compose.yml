@@ -1,50 +1,34 @@
 version: "3.2"
 services:
-#  mariadb:
-#    container_name: mariadb
-#    image: mariadb
-##    networks:
-##      - mariadb
-#    volumes:
-#      - ./docker/mariadb/var/lib/mysql:/var/lib/mysql
-#      # Log 추가해야함
-#    environment:
-#      - TZ=Asia/Seoul
-#      - MYSQL_DATABASE=root
-#      - MYSQL_ROOT_PASSWORD=mariadb
-#      - MYSQL_ROOT_HOST=%
-#      - MYSQL_TCP_PORT=8081
-#      - MYSQL_DATABASE=batch
-#    command: ['--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci']
-#    ports:
-#      - "8081:8081"
-##    restart: always
 
-  mysql:
-    platform: linux/x86_64
-#    image: mysql:5.7.25
-    image: library/mysql:5.7
-    container_name: dataflow-mysql
-    environment:
-      MYSQL_DATABASE: dataflow
-#      MYSQL_USER: root
-      MYSQL_ROOT_PASSWORD: rootpw
-      TZ: Asia/Seoul
-    ports:
-      - "3306:3306"
-    volumes:
-      - ./docker/mysql/var/lib/mysql:/var/lib/mysql
-      - ./docker/mysql/init:/docker-entrypoint-initdb.d
+  # docker image prune -a
+
+# 내 피씨에서 실행할때 사용
+#  mysql:
+##    platform: linux/x86_64
+##    image: mysql:5.7.25
+#    image: library/mysql:5.7
+#    container_name: dataflow-mysql
+#    environment:
+#      MYSQL_DATABASE: dataflow
+##      MYSQL_USER: lawshop
+#      MYSQL_ROOT_PASSWORD: znzn2753@
+#      TZ: Asia/Seoul
+#    ports:
+#      - "3306:3306"
+#    volumes:
+#      - ./docker/mysql/var/lib/mysql:/var/lib/mysql
+#      - ./docker/mysql/init:/docker-entrypoint-initdb.d
 
   kafka-broker:
-    platform: linux/x86_64
+#    platform: linux/x86_64
     image: confluentinc/cp-kafka:5.5.2
     container_name: dataflow-kafka
     ports:
       - "9092:9092"
     environment:
-#      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka-broker:9092
-      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka-broker:9092
+#      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092
       - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
       - KAFKA_ADVERTISED_HOST_NAME=kafka-broker
       - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
@@ -56,7 +40,7 @@ services:
       - zookeeper
 
   zookeeper:
-    platform: linux/x86_64
+#    platform: linux/x86_64
     image: confluentinc/cp-zookeeper:5.5.2
     container_name: dataflow-kafka-zookeeper
     ports:
@@ -68,7 +52,7 @@ services:
       - ZOOKEEPER_CLIENT_PORT=2181
 
   dataflow-server:
-    platform: linux/x86_64
+#    platform: linux/x86_64
     user: root
     image: springcloud/spring-cloud-dataflow-server:${DATAFLOW_VERSION:-2.9.1}${BP_JVM_VERSION:-}
     container_name: dataflow-server
@@ -85,11 +69,14 @@ services:
       - SPRING_CLOUD_DATAFLOW_APPLICATIONPROPERTIES_TASK_SPRING_CLOUD_TASK_CLOSECONTEXTENABLED=true
 
       - SPRING_CLOUD_SKIPPER_CLIENT_SERVER_URI=${SKIPPER_URI:-http://skipper-server:7577}/api
-
-      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/dataflow
-      - SPRING_DATASOURCE_USERNAME=root
-      - SPRING_DATASOURCE_PASSWORD=rootpw
+#     TODO TEST DB, LOCALDB
+#      - SPRING_DATASOURCE_URL=jdbc:mariadb://116.126.158.6:3306/dataflow
+#      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/dataflow
+      - SPRING_DATASOURCE_URL=jdbc:mariadb://116.126.158.6:3306/dataflowTest
+      - SPRING_DATASOURCE_USERNAME=lawshop
+      - SPRING_DATASOURCE_PASSWORD=znzn2753@
       - SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.mariadb.jdbc.Driver
+      - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.MariaDB102Dialect
       # (Optionally) authenticate the default Docker Hub access for the App Metadata access.
       - SPRING_CLOUD_DATAFLOW_CONTAINER_REGISTRY_CONFIGURATIONS_DEFAULT_USER=${METADATA_DEFAULT_DOCKERHUB_USER}
       - SPRING_CLOUD_DATAFLOW_CONTAINER_REGISTRY_CONFIGURATIONS_DEFAULT_SECRET=${METADATA_DEFAULT_DOCKERHUB_PASSWORD}
@@ -104,14 +91,15 @@ services:
          apt-get update && apt-get install --no-install-recommends -y wget &&
          wget --no-check-certificate -P /tmp/ https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh &&
          chmod a+x /tmp/wait-for-it.sh &&
-         /tmp/wait-for-it.sh mysql:3306 -- /cnb/process/web"
-#    restart: always
+         /tmp/wait-for-it.sh 116.126.158.6:3306 -- /cnb/process/web"
     volumes:
       - ./docker/dataflow-server:/var/lib/dataflow-server
       - ./docker/dataflow-server/logs:/var/log/dataflow-server
+      - ./docker/dataflow-server/tmp:/tmp
+      - /Users/jinhuipark/.m2:/root/.m2
 
   app-import-stream:
-    platform: linux/x86_64
+#    platform: linux/x86_64
     image: springcloud/baseimage:1.0.0
     container_name: dataflow-app-import-stream
     depends_on:
@@ -126,7 +114,7 @@ services:
         echo 'Maven Stream apps imported'"
 
   app-import-task:
-    platform: linux/x86_64
+#    platform: linux/x86_64
     image: springcloud/baseimage:1.0.0
     container_name: dataflow-app-import-task
     depends_on:
@@ -138,7 +126,7 @@ services:
         echo 'Maven Task apps imported'"
 
   skipper-server:
-    platform: linux/x86_64
+#    platform: linux/x86_64
     user: root
     image: springcloud/spring-cloud-skipper-server:${SKIPPER_VERSION:-2.8.1}${BP_JVM_VERSION:-}
     container_name: skipper
@@ -148,9 +136,12 @@ services:
     environment:
       - SPRING_CLOUD_SKIPPER_SERVER_PLATFORM_LOCAL_ACCOUNTS_DEFAULT_PORTRANGE_LOW=20000
       - SPRING_CLOUD_SKIPPER_SERVER_PLATFORM_LOCAL_ACCOUNTS_DEFAULT_PORTRANGE_HIGH=20190
-      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/dataflow
-      - SPRING_DATASOURCE_USERNAME=root
-      - SPRING_DATASOURCE_PASSWORD=rootpw
+      # TODO
+#      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/dataflow
+#      - SPRING_DATASOURCE_URL=jdbc:mariadb://116.126.158.6:3306/dataflow
+      - SPRING_DATASOURCE_URL=jdbc:mariadb://116.126.158.6:3306/dataflowTest
+      - SPRING_DATASOURCE_USERNAME=lawshop
+      - SPRING_DATASOURCE_PASSWORD=znzn2753@
       - SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.mariadb.jdbc.Driver
       - LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_CLOUD_SKIPPER_SERVER_DEPLOYER=ERROR
     entrypoint: >
@@ -158,13 +149,12 @@ services:
          apt-get update && apt-get install --no-install-recommends -y wget &&
          wget --no-check-certificate -P /tmp/ https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh &&
          chmod a+x /tmp/wait-for-it.sh &&
-         /tmp/wait-for-it.sh mysql:3306 -- /cnb/process/web"
-#    restart: always
+         /tmp/wait-for-it.sh 116.126.158.6:3306 -- /cnb/process/web"
     volumes:
       - ./docker/skipper-server:/var/lib/skipper-server
       - ./docker/skipper-server/logs:/var/log/skipper-server
 
-# sudo lsof -i :port
+# Port 확인 sudo lsof -i :port
 #networks:
 #  mariadb:
 #    driver: bridge
